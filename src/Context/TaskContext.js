@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 
 import { toast } from "react-toastify";
@@ -25,9 +26,14 @@ export const TaskProvider = ({ children }) => {
   const getTasks = async () => {
     try {
       const q = query(taskRef, orderBy("createdAt"));
-      const taskSnap = await getDocs(q);
-      const task = taskSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setTasks(task);
+
+      onSnapshot(q, (taskSnap) => {
+        const task = taskSnap.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setTasks(task);
+      });
     } catch (err) {
       toast.error("Oops! Something went wrong.");
     }

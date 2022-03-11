@@ -3,6 +3,7 @@ import { db } from "../../Firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { HiOutlineTrash } from "react-icons/hi";
+import { FaReply } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 function Task({ title, id }) {
@@ -12,10 +13,14 @@ function Task({ title, id }) {
   const handleCompleted = () => {
     setIsCompleted(true);
   };
+  // ! undo
+  const handleUndo = () => {
+    setIsCompleted(false);
+  };
   // ! delete function
   const handleDeleted = async () => {
     await deleteDoc(doc(db, "tasks", id));
-    toast("You Deleted the task😭 refresh the page.");
+    toast("You Deleted the task😭.");
   };
 
   return (
@@ -37,10 +42,14 @@ function Task({ title, id }) {
           id="icons"
           className="flex items-center justify-center gap-1 lg:absolute lg:right-[27rem]"
         >
-          <BsCheckCircleFill
-            className="w-5 h-5 cursor-pointer"
-            onClick={handleCompleted}
-          />
+          {isCompleted ? (
+            <FaReply onClick={handleUndo} className="w-5 h-5 cursor-pointer" />
+          ) : (
+            <BsCheckCircleFill
+              className="w-5 h-5 cursor-pointer"
+              onClick={handleCompleted}
+            />
+          )}
           <HiOutlineTrash
             className="w-6 h-6 cursor-pointer"
             onClick={handleDeleted}
